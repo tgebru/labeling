@@ -1,0 +1,1 @@
+/afs/cs.stanford.edu/u/tgebru/.local/bin/django-admin.py
