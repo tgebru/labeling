@@ -64,25 +64,25 @@ def get_im_bbox(b):
 
 def submodel_only_matches(request,usr):
   if usr is None or usr=='' or usr=='/':
-    total_ims=Bboxes.objects.filter(group_id= None).exclude(make=None).exclude(submodel='unknown').exclude(submodel=None).filter(make='unknown').filter(cur_state__box_done=1).filter(cur_state__ground_truth=0).values('make','submodel').annotate(Count('make'),Count('submodel'))
+    total_ims=Bboxes.objects.filter(group_id= None).exclude(make=None).exclude(submodel='unknown').exclude(submodel=None).filter(make='unknown').filter(cur_state__box_done=1).values('make','submodel').annotate(Count('make'),Count('submodel'))
   else:
-    total_ims=Bboxes.objects.filter(cur_state__user=usr).filter(group_id= None).exclude(make=None).exclude(submodel='unknown').exclude(submodel=None).filter(make='unknown').filter(cur_state__box_done=1).filter(cur_state__ground_truth=0).values('make','submodel').annotate(Count('make'),Count('submodel'))
+    total_ims=Bboxes.objects.filter(cur_state__user=usr).filter(group_id= None).exclude(make=None).exclude(submodel='unknown').exclude(submodel=None).filter(make='unknown').filter(cur_state__box_done=1).values('make','submodel').annotate(Count('make'),Count('submodel'))
 
   return render_to_response('streetview/make_submodel_matches.html',{'total_ims':total_ims,'username':usr})
 
 def make_only_matches(request,usr):
   if usr is None or usr=='' or usr=='/':
-    total_ims=Bboxes.objects.filter(group_id= None).exclude(make=None).filter(submodel='unknown').exclude(submodel=None).exclude(make='unknown').filter(cur_state__box_done=1).filter(cur_state__ground_truth=0).values('make','submodel').annotate(Count('make'),Count('submodel'))
+    total_ims=Bboxes.objects.filter(group_id= None).exclude(make=None).filter(submodel='unknown').exclude(submodel=None).exclude(make='unknown').filter(cur_state__box_done=1).values('make','submodel').annotate(Count('make'),Count('submodel'))
   else:
-    total_ims=Bboxes.objects.filter(cur_state__user=usr).filter(group_id= None).exclude(make=None).filter(submodel='unknown').exclude(submodel=None).exclude(make='unknown').filter(cur_state__box_done=1).filter(cur_state__ground_truth=0).values('make','submodel').annotate(Count('make'),Count('submodel'))
+    total_ims=Bboxes.objects.filter(cur_state__user=usr).filter(group_id= None).exclude(make=None).filter(submodel='unknown').exclude(submodel=None).exclude(make='unknown').filter(cur_state__box_done=1).values('make','submodel').annotate(Count('make'),Count('submodel'))
 
   return render_to_response('streetview/make_submodel_matches.html',{'total_ims':total_ims,'username':usr})
 
 def make_submodel_matches(request,usr):
   if usr is None or usr=='' or usr=='/':
-    total_ims=Bboxes.objects.filter(group_id= None).exclude(make=None).exclude(submodel='unknown').exclude(submodel=None).exclude(make='unknown').values('make','submodel').filter(cur_state__ground_truth=0).filter(cur_state__box_done=1).annotate(Count('make'),Count('submodel'))
+    total_ims=Bboxes.objects.filter(group_id= None).exclude(make=None).exclude(submodel='unknown').exclude(submodel=None).exclude(make='unknown').values('make','submodel').filter(cur_state__box_done=1).annotate(Count('make'),Count('submodel'))
   else:
-    total_ims=Bboxes.objects.filter(group_id= None).exclude(make=None).exclude(submodel='unknown').exclude(submodel=None).exclude(make='unknown').values('make','submodel').filter(cur_state__user=usr).filter(cur_state__ground_truth=0).filter(cur_state__box_done=1).annotate(Count('make'),Count('submodel'))
+    total_ims=Bboxes.objects.filter(group_id= None).exclude(make=None).exclude(submodel='unknown').exclude(submodel=None).exclude(make='unknown').values('make','submodel').filter(cur_state__user=usr).filter(cur_state__box_done=1).annotate(Count('make'),Count('submodel'))
   
   return render_to_response('streetview/make_submodel_matches.html',{'total_ims':total_ims,'username':usr})
   
@@ -92,9 +92,9 @@ def make_submodel_match(request,make_model,usr):
   ims=[]
 
   if usr is None or usr=='' or usr=='/':
-    bbox_ids=Bboxes.objects.filter(make=make).filter(submodel=submodel).filter(cur_state__ground_truth=0).filter(cur_state__box_done=1).filter(group_id=None).values('bbox_id') 
+    bbox_ids=Bboxes.objects.filter(make=make).filter(submodel=submodel).filter(cur_state__box_done=1).filter(group_id=None).values('bbox_id') 
   else:
-    bbox_ids=Bboxes.objects.filter(cur_state__user=usr).filter(make=make).filter(submodel=submodel).filter(cur_state__ground_truth=0).filter(cur_state__box_done=1).filter(group_id=None).values('bbox_id') 
+    bbox_ids=Bboxes.objects.filter(cur_state__user=usr).filter(make=make).filter(submodel=submodel).filter(cur_state__box_done=1).filter(group_id=None).values('bbox_id') 
 
   for box in bbox_ids: 
     b=Cur_state.objects.filter(bbox_id=box['bbox_id']).get()
@@ -108,9 +108,9 @@ def make_submodel_match(request,make_model,usr):
 
 def exact_match(request,g_id,usr):
   if usr is None or usr=='' or usr=='/':
-    bbox_ids=Bboxes.objects.filter(group_id=g_id).filter(cur_state__box_done=1).filter(cur_state__ground_truth=0).values('bbox_id')
+    bbox_ids=Bboxes.objects.filter(group_id=g_id).filter(cur_state__box_done=1).values('bbox_id')
   else:
-    bbox_ids=Bboxes.objects.filter(group_id=g_id).filter(cur_state__box_done=1).filter(cur_state__ground_truth=0).filter(cur_state__user=usr).values('bbox_id')
+    bbox_ids=Bboxes.objects.filter(group_id=g_id).filter(cur_state__box_done=1).filter(cur_state__user=usr).values('bbox_id')
   ims=[]
   for box in bbox_ids: 
     b=Cur_state.objects.filter(bbox_id=box['bbox_id']).get()
@@ -154,8 +154,8 @@ def worker_results(request):
   for usr in users:
     worker={}
     worker['name']=usr['user']
-    worker['total_ims']=Cur_state.objects.filter(user=usr['user']).filter(ground_truth=0).filter(box_done=1).count()
-    worker['exact_matches']=Cur_state.objects.filter(user=usr['user']).filter(ground_truth=0).filter(box_done=1).exclude(bbox__group_id=None).count()
+    worker['total_ims']=Cur_state.objects.filter(user=usr['user']).filter(box_done=1).count()
+    worker['exact_matches']=Cur_state.objects.filter(user=usr['user']).filter(box_done=1).exclude(bbox__group_id=None).count()
     #worker['ave_speed']=
     people.append(worker)
     
@@ -173,12 +173,12 @@ def summary(request,usr):
     show_worker=True
   
   else:
-    total_ims=Cur_state.objects.filter(ground_truth=0).filter(box_done=1).filter(user=usr).count()
-    exact_matches=Cur_state.objects.filter(ground_truth=0).filter(box_done=1).exclude(bbox__group_id=None).filter(user=usr).count()
-    make_only_matches=Cur_state.objects.filter(ground_truth=0).filter(box_done=1).filter(bbox__group_id=None).exclude(bbox__make='unknown').filter(bbox__submodel='unknown').filter(user=usr).count()
-    submodel_only_matches=Cur_state.objects.filter(ground_truth=0).filter(box_done=1).filter(bbox__group_id=None).filter(bbox__make='unknown').exclude(bbox__submodel='unknown').exclude(bbox__submodel=None).filter(user=usr).count()
-    make_submodel_matches=Cur_state.objects.filter(ground_truth=0).filter(box_done=1).filter(bbox__group_id= None).exclude(bbox__make=None).exclude(bbox__submodel='unknown').exclude(bbox__submodel=None).exclude(bbox__make='unknown').filter(user=usr).count()
-    unknown=Cur_state.objects.filter(ground_truth=0).filter(box_done=1).filter(bbox__submodel='unknown').filter(bbox__make='unknown').filter(bbox__group_id=None).filter(user=usr).count()
+    total_ims=Cur_state.objects.filter(box_done=1).filter(user=usr).count()
+    exact_matches=Cur_state.objects.filter(box_done=1).exclude(bbox__group_id=None).filter(user=usr).count()
+    make_only_matches=Cur_state.objects.filter(box_done=1).filter(bbox__group_id=None).exclude(bbox__make='unknown').filter(bbox__submodel='unknown').filter(user=usr).count()
+    submodel_only_matches=Cur_state.objects.filter(box_done=1).filter(bbox__group_id=None).filter(bbox__make='unknown').exclude(bbox__submodel='unknown').exclude(bbox__submodel=None).filter(user=usr).count()
+    make_submodel_matches=Cur_state.objects.filter(box_done=1).filter(bbox__group_id= None).exclude(bbox__make=None).exclude(bbox__submodel='unknown').exclude(bbox__submodel=None).exclude(bbox__make='unknown').filter(user=usr).count()
+    unknown=Cur_state.objects.filter(box_done=1).filter(bbox__submodel='unknown').filter(bbox__make='unknown').filter(bbox__group_id=None).filter(user=usr).count()
     show_worker=False
 
   return render_to_response('streetview/summary.html', {'total_ims':total_ims,'exact_matches':exact_matches,'make_submodel_matches':make_submodel_matches,'make_only_matches':make_only_matches,'submodel_only_matches':submodel_only_matches,'unknown':unknown, 'show_worker':show_worker,'username':usr})
@@ -197,16 +197,18 @@ def get_next_image(username):
     b.save()
   except Cur_state.DoesNotExist:
     try:
-      bboxes=Cur_state.objects.exclude(box_done=1).filter(box_selected=1).filter(bbox__big_enough=1).all()
-      if bboxes:
-        for b in bboxes:
-          if datetime.now(b.date_selected.tzinfo)-b.date_selected<date_threshold:
-            b.date_selected= now#datetime.now()
-            b.save()
-            break
+      if not username.startswith('gtruth'):
+        bboxes=Cur_state.objects.exclude(box_done=1).filter(box_selected=1).filter(bbox__big_enough=1).all()
+        if bboxes:
+          for b in bboxes:
+            if datetime.now(b.date_selected.tzinfo)-b.date_selected<date_threshold:
+              b.date_selected= now#datetime.now()
+              b.save()
+              break
+        else:
+          return '',''
       else:
-        return '',''
-
+          return '',''
     except Cur_state.DoesNotExist:
       return '','' 
 
