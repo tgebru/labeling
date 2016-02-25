@@ -14,5 +14,6 @@ if streetview_path not in sys.path:
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+os.environ["DJANGO_SETTINGS_MODULE"] = "mysite.settings"
 import django.core.handlers.wsgi
 application = django.core.handlers.wsgi.WSGIHandler()

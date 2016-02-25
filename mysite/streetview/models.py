@@ -16,6 +16,7 @@ class Bboxes(models.Model):
     synsetid =models.IntegerField(null=False)    
     imageid  =models.IntegerField(null=False)   
     big_enough =models.IntegerField(null=False)   
+    new_big_enough =models.IntegerField(null=False)   
     group_id=models.IntegerField(blank=True, null=True)
     make=models.CharField(max_length=10000)
     model=models.CharField(max_length=10000)

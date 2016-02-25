@@ -188,6 +188,7 @@ def get_next_image(username):
   now = timezone.now()
   try:
     if username.startswith('gtruth'):
+      #b=Cur_state.objects.filter(bbox__new_big_enough=1).filter(bbox__big_enough=0).filter(box_selected=0)[:1].get()
       b=Cur_state.objects.filter(ground_truth=1).filter(box_selected=0)[:1].get()
       #b=Cur_state.objects.filter(box_selected=0).filter(bbox__big_enough=1)[:1].get()
     else:
@@ -196,6 +197,7 @@ def get_next_image(username):
     b.date_selected= now#datetime.now()
     b.save()
   except Cur_state.DoesNotExist:
+    '''
     try:
       if not username.startswith('gtruth'):
         bboxes=Cur_state.objects.exclude(box_done=1).filter(box_selected=1).filter(bbox__big_enough=1).all()
@@ -211,6 +213,8 @@ def get_next_image(username):
           return '',''
     except Cur_state.DoesNotExist:
       return '','' 
+    '''
+    return '','' 
 
   return get_im_bbox(b)
 

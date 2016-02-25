@@ -6,6 +6,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
   url(r'^polls/', include('polls.urls')),
   url(r'^streetview/', include('streetview.urls')),
+  url(r'^timelapse/', include('timelapse.urls')),
   url(r'^admin/', include(admin.site.urls)),
 )
 

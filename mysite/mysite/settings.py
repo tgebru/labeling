@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'polls',
     'streetview',
+    'timelapse',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -86,7 +87,7 @@ STATIC_ROOT= '/afs/cs.stanford.edu/u/tgebru/django/staticfiles'
 
 STATIC_DIRS = (
   #'/afs/cs.stanford.edu/u/tgebru/django/staticfiles'
-  '/afs/cs.stanford.edu/u/tgebru/cars/streetview_labeling/mysite/streetview/static'
+  '/afs/cs.stanford.edu/u/tgebru/cars/streetview_labeling/mysite/streetview/static',
 )
 TEMPLATE_DIRS = (
   '/afs/cs.stanford.edu/u/tgebru/django/mytemplates',
