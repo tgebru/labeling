@@ -147,6 +147,62 @@ def pascal_experiments(request,filter=None,exp=None):
    return render_to_response('timelapse/pascal_experiments.html',{'name_list':name_list})
 
 
+def corr_scatter(request,data_type,year,census_att):
+  min_pop=0;
+  min_cars=0;
+  man_only=data_type[-1]
+  geo=data_type.split('_')[0]
+  base_dir='/imagenetdb/www/home/internal'
+  scatter_dir_base='cor_minpop_%d_mincars_%d_scatter_%s_manh_%s'%(min_pop,min_cars,geo,man_only)
+  if not census_att:
+     att_list=os.listdir(os.path.join(base_dir,scatter_dir_base,'%s'%year))
+     return render_to_response('timelapse/show_cor_census_list.html',{'att_list':att_list,'data_type':data_type,'year':year}) 
+
+  else:
+    img_list=os.listdir(os.path.join(base_dir,scatter_dir_base,'%s'%year,'%s'%census_att))
+
+    return render_to_response('timelapse/show_cor_scatter.html',{'img_list':img_list,'year':year,'man':man_only,'base_dir':os.path.join(scatter_dir_base,'%s'%(year),'%s'%census_att)})
+
+
+def corr_scatter_years(request,data_type):
+  min_pop=0;
+  min_cars=0;
+  man_only=data_type[-1]
+  geo=data_type.split('_')[0]
+  base_dir='/imagenetdb/www/home/internal'
+  scatter_dir_base='cor_minpop_%d_mincars_%d_scatter_%s_manh_%s'%(min_pop,min_cars,geo,man_only)
+
+  year_list=os.listdir(os.path.join(base_dir,scatter_dir_base))
+  years=[y for y in year_list if not y.startswith('.')]
+
+  return render_to_response('timelapse/show_cor_scatter_list.html',{'year_list':list(set(years)),'data_type':data_type}) 
+
+def corr_plots_atts(request,data_type):
+  min_pop=0;
+  min_cars=0;
+  man_only=data_type[-1]
+  geo=data_type.split('_')[0]
+  base_dir='/imagenetdb/www/home/internal'
+  plot_dir_base='cor_minpop_%d_mincars_%d_plots_%s_manh_%s'%(min_pop,min_cars,geo,man_only)
+
+  att_list=os.listdir(os.path.join(base_dir,plot_dir_base))
+  atts=[a for a in att_list if not a.startswith('.')]
+
+  return render_to_response('timelapse/show_cor_plot_list.html',{'att_list':atts,'data_type':data_type}) 
+
+def corr_plots(request,data_type,att):
+  min_pop=0;
+  min_cars=0;
+  man_only=data_type[-1]
+  geo=data_type.split('_')[0]
+  base_dir='/imagenetdb/www/home/internal'
+  plot_dir_base='cor_minpop_%d_mincars_%d_plots_%s_manh_%s'%(min_pop,min_cars,geo,man_only)
+
+  file_dir=os.path.join(base_dir,plot_dir_base,att)
+  img_list=os.listdir(file_dir)
+
+  return render_to_response('timelapse/show_cor_scatter.html',{'img_list':img_list,'base_dir':os.path.join(plot_dir_base,att),'year':'2012'})
+
 def predictions_years(request,year):
   scatter_dir='scatter' #'scatter_whole' #'scatter_softmax' 
   if not year:
@@ -161,8 +217,6 @@ def predictions_years(request,year):
   img_list_train=os.listdir('/imagenetdb/www/home/internal/%s/train_%s'%(scatter_dir,year))
   img_list_test=os.listdir('/imagenetdb/www/home/internal/%s/test_%s'%(scatter_dir,year))
   year_list=[year]*len(img_list_test)
-  #train_corrs_list=open('/imagenetdb/www/home/internal/scatter/train_%s/corrs.txt'%year)
-  #test_corrs=open('/imagenetdb/www/home/internal/scatter/test_%s/corrs.txt'%year)
   img_list=zip(img_list_train,img_list_test,year_list)
   return render_to_response('timelapse/show_scatter.html',{'img_list':img_list})
 
@@ -180,11 +234,11 @@ def car_atts(request,att_type,data_type):
   #Data type choices are DISTRICT,ZIPCODE, etc...
   #data_type='DISTRICT'
   if att_type=='cars':
-    att_dir='/imagenetdb/www/home/internal/car_atts_%s'%data_type
-    dir_name='car_atts_%s'%data_type
+    att_dir='/imagenetdb/www/home/internal/new_car_atts_%s'%data_type
+    dir_name='new_car_atts_%s'%data_type
   else:
-    att_dir='/imagenetdb/www/home/internal/census_plots_%s'%data_type
-    dir_name='census_plots_%s'%data_type
+    att_dir='/imagenetdb/www/home/internal/new_census_plots_%s'%data_type
+    dir_name='new_census_plots_%s'%data_type
 
   att_list=os.listdir(att_dir)
   att_ims=[l for l in att_list if l.endswith('png')]
@@ -199,7 +253,16 @@ def get_stats(request):
    return render_to_response('timelapse/show_att_ims.html',{'img_list':img_list})
 
 def correlations_years(request,data_type,year):
-  corr_dir='/imagenetdb/www/home/internal/corrs_%s'%(data_type)
+  if data_type=='ZIPCODE_WHOLE':
+    corr_dir='/imagenetdb/www/home/internal/whole_corrs_new_ZIPCODE_ny_0'
+  elif data_type=='ZIPCODE_WHOLE_NY':
+    corr_dir='/imagenetdb/www/home/internal/whole_corrs_new_ZIPCODE_ny_1'
+  elif data_type=='ZIPCODE_MAN':
+    corr_dir='/imagenetdb/www/home/internal/corrs_new_ZIPCODE_manh_1'
+  elif data_type=='DISTRICT_MAN':
+    corr_dir='/imagenetdb/www/home/internal/corrs_new_DISTRICT_manh_1'
+  else:
+    corr_dir='/imagenetdb/www/home/internal/corrs_new_%s'%(data_type)
   if not year:
      year_list=os.listdir(corr_dir)
      years=[]
@@ -210,7 +273,7 @@ def correlations_years(request,data_type,year):
        years.append(year_sub[year_sub.rfind('_')+1:])
      return render_to_response('timelapse/show_corr_list.html',{'year_list':list(set(years))}) 
 
-  corr_file='demo_corrs_%s.rc.0.minp.5000.minc.500_sorted.txt'%(year)
+  corr_file='demo_corrs_%s.rc.1.minp.0.minc.0_sorted.txt'%(year)
   lines=open(os.path.join(corr_dir,corr_file),'r').readlines()
   year_list=[year]*len(lines)
   corr_list=zip(lines,year_list)
